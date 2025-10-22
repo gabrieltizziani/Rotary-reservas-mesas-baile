@@ -1,9 +1,12 @@
 package com.rotary.reservas_mesas_rotary.domain.baile;
 
+import com.rotary.reservas_mesas_rotary.domain.mesa.Mesa;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "baile")
 @Table(name = "baile")
@@ -21,6 +24,13 @@ public class Baile {
     private String descricaoBaile;
     private LocalDateTime dataDoBaile;
     private String localizacao;
+    private Integer totalMesas;
+
+    @OneToMany(mappedBy = "baile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Mesa> mesas = new ArrayList<>();
+
+
+    @Enumerated(EnumType.STRING)
     private StatusBaile status =  StatusBaile.ABERTO;
 
     public Baile (DadosCadastroBaile dadosCadastroBaile){
@@ -28,6 +38,7 @@ public class Baile {
         this.descricaoBaile = dadosCadastroBaile.descricaoBaile();
         this.dataDoBaile = dadosCadastroBaile.dataDoBaile();
         this.localizacao = dadosCadastroBaile.localizacao();
+        this.totalMesas = dadosCadastroBaile.totalMesas();
     }
 
     public void atualizarBaile (DadosAtualizarBaile dadosAtualizarBaile){
@@ -43,15 +54,11 @@ public class Baile {
         if (dadosAtualizarBaile.localizacao() != null){
             this.localizacao = dadosAtualizarBaile.localizacao();
         }
+        if (dadosAtualizarBaile.totalMesas() != null){
+            this.totalMesas = dadosAtualizarBaile.totalMesas();
+        }
         if (dadosAtualizarBaile.status() != null){
             this.status = dadosAtualizarBaile.status();
         }
     }
-
-
-
-
-
-
-
 }

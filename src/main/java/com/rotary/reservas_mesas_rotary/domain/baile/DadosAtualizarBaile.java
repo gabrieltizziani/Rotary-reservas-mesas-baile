@@ -14,6 +14,7 @@ public record DadosAtualizarBaile(
     String descricaoBaile,
     LocalDateTime dataDoBaile,
     String localizacao,
+    Integer totalMesas,
     StatusBaile status
 ) {
 }

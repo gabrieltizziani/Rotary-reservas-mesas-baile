@@ -1,6 +1,7 @@
 package com.rotary.reservas_mesas_rotary.domain.baile;
 
 import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -18,7 +19,11 @@ public record DadosCadastroBaile(
         LocalDateTime dataDoBaile,
 
         @NotBlank(message = "A localização do baile é obrigatória ")
-        String localizacao
+        String localizacao,
+
+        @NotNull(message = "O total de mesas é obrigatório")
+        @Min(value = 1, message = "O baile deve ter pelo menos uma mesa")
+        Integer totalMesas
 
 ) {
 }
