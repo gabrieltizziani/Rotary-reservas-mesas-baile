@@ -1,5 +1,6 @@
 package com.rotary.reservas_mesas_rotary.domain.baile;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rotary.reservas_mesas_rotary.domain.mesa.Mesa;
 import jakarta.persistence.*;
 import lombok.*;
@@ -54,11 +55,25 @@ public class Baile {
         if (dadosAtualizarBaile.localizacao() != null){
             this.localizacao = dadosAtualizarBaile.localizacao();
         }
-        if (dadosAtualizarBaile.totalMesas() != null){
-            this.totalMesas = dadosAtualizarBaile.totalMesas();
-        }
         if (dadosAtualizarBaile.status() != null){
             this.status = dadosAtualizarBaile.status();
+        }
+        if (dadosAtualizarBaile.totalMesas() != null){
+            int novoTotal = dadosAtualizarBaile.totalMesas();
+
+            if(novoTotal < this.totalMesas){
+                this.mesas.removeIf(mesa -> mesa.getNumeroMesa()> novoTotal);
+            }
+
+            if (novoTotal > this.totalMesas){
+                for (int i = this.totalMesas + 1; i <= novoTotal ; i++) {
+                    Mesa novaMesa = new Mesa();
+                    novaMesa.setNumeroMesa(i);
+                    novaMesa.setBaile(this);
+                    this.mesas.add(novaMesa);
+                }
+            }
+            this.totalMesas = novoTotal;
         }
     }
 }
