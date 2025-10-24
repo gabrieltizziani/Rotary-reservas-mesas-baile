@@ -1,5 +1,6 @@
 package com.rotary.reservas_mesas_rotary.domain.mesa;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.rotary.reservas_mesas_rotary.domain.baile.Baile;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,4 +24,5 @@ public class Mesa {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "baile_id", nullable = false)
     private Baile baile;
+
 }
