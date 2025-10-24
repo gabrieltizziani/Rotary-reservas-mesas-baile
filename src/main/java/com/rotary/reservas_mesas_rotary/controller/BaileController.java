@@ -1,9 +1,6 @@
 package com.rotary.reservas_mesas_rotary.controller;
 
-import com.rotary.reservas_mesas_rotary.domain.baile.Baile;
-import com.rotary.reservas_mesas_rotary.domain.baile.DadosAtualizarBaile;
-import com.rotary.reservas_mesas_rotary.domain.baile.DadosCadastroBaile;
-import com.rotary.reservas_mesas_rotary.domain.baile.DadosListagemBaile;
+import com.rotary.reservas_mesas_rotary.domain.baile.*;
 import com.rotary.reservas_mesas_rotary.repositories.BaileRepository;
 import com.rotary.reservas_mesas_rotary.services.BaileService;
 import jakarta.validation.Valid;
@@ -44,6 +41,11 @@ public class BaileController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/{id}/mesas")
+    public ResponseEntity<BaileComMesasDTO> listarMesas(@PathVariable long id){
+        var baileComMesas = baileService.listarBaileComMesas(id);
+        return ResponseEntity.ok(baileComMesas);
+    }
 
 
 
