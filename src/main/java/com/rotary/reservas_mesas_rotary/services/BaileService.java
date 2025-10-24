@@ -26,6 +26,9 @@ public class BaileService {
         if (dadosCadastroBaile.dataDoBaile().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("A data do baile não pode ser no passado.");
         }
+        if (dadosCadastroBaile.totalMesas() <= 0) {
+            throw new IllegalArgumentException("O total de mesas deve ser maior que zero.");
+        }
 
         var baile = new Baile(dadosCadastroBaile);
         baileRepository.save(baile);
@@ -46,6 +49,10 @@ public class BaileService {
     }
 
     public Baile atualizarBaile(DadosAtualizarBaile dadosAtualizarBaile){
+        if (dadosAtualizarBaile.totalMesas() != null && dadosAtualizarBaile.totalMesas() <= 0) {
+            throw new IllegalArgumentException("O total de mesas deve ser maior que zero.");
+        }
+
         var baile = baileRepository.getReferenceById(dadosAtualizarBaile.id());
         baile.atualizarBaile(dadosAtualizarBaile);
         return baileRepository.save(baile);
@@ -76,6 +83,11 @@ public class BaileService {
             mesas.add(mesa);
         }
         mesaRepositoy.saveAll(mesas);
+    }
+
+    public BaileComMesasDTO listarBaileComMesas(Long idBaile){
+        var baile = baileRepository.getReferenceById(idBaile);
+        return new BaileComMesasDTO(baile);
     }
 
 }
