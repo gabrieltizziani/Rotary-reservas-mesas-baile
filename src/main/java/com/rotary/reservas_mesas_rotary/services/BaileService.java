@@ -3,7 +3,7 @@ package com.rotary.reservas_mesas_rotary.services;
 import com.rotary.reservas_mesas_rotary.domain.baile.*;
 import com.rotary.reservas_mesas_rotary.domain.mesa.Mesa;
 import com.rotary.reservas_mesas_rotary.repositories.BaileRepository;
-import com.rotary.reservas_mesas_rotary.repositories.MesaRepositoy;
+import com.rotary.reservas_mesas_rotary.repositories.MesaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class BaileService {
     @Autowired
     private BaileRepository baileRepository;
     @Autowired
-    private MesaRepositoy mesaRepositoy;
+    private MesaRepository mesaRepositoy;
 
     @Transactional
     public Baile cadastroBaile(DadosCadastroBaile dadosCadastroBaile){

@@ -28,6 +28,7 @@ public class Baile {
     private Integer totalMesas;
 
     @OneToMany(mappedBy = "baile", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Mesa> mesas = new ArrayList<>();
 
 
