@@ -5,8 +5,11 @@ import com.rotary.reservas_mesas_rotary.domain.mesa.Mesa;
 import com.rotary.reservas_mesas_rotary.repositories.BaileRepository;
 import com.rotary.reservas_mesas_rotary.repositories.MesaRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -38,15 +41,15 @@ public class BaileService {
         return baile;
     }
 
-    public List<DadosListagemBaile> listarBailes() {
-        var bailes =  baileRepository.findAll();
+    public Page<DadosListagemBaile> listarBailesOrdenados(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Baile> bailes = baileRepository.findBailesOrdenados(pageable);
 
         bailes.forEach(this::verificarStatusAutomatico);
 
-        return bailes.stream()
-                .map(DadosListagemBaile::new)
-                .toList();
+        return bailes.map(DadosListagemBaile::new);
     }
+
 
     public Baile atualizarBaile(DadosAtualizarBaile dadosAtualizarBaile){
         if (dadosAtualizarBaile.totalMesas() != null && dadosAtualizarBaile.totalMesas() <= 0) {
@@ -67,7 +70,7 @@ public class BaileService {
 
     public void verificarStatusAutomatico(Baile baile){
         if (baile.getDataDoBaile().isBefore(LocalDateTime.now())
-                &&baile.getStatus() == StatusBaile.ABERTO) {
+                &&baile.getStatus() == StatusBaile.ATIVO) {
             baile.setStatus(StatusBaile.ENCERRADO);
             baileRepository.save(baile);
         }

@@ -5,6 +5,7 @@ import com.rotary.reservas_mesas_rotary.repositories.BaileRepository;
 import com.rotary.reservas_mesas_rotary.services.BaileService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,10 +25,14 @@ public class BaileController {
     }
 
     @GetMapping
-    public ResponseEntity <List<DadosListagemBaile>> listarBailes(){
-        var bailes = baileService.listarBailes();
+    public ResponseEntity<Page<DadosListagemBaile>> listarBailes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size
+    ) {
+        var bailes = baileService.listarBailesOrdenados(page, size);
         return ResponseEntity.ok(bailes);
     }
+
 
     @PutMapping
     public ResponseEntity atualizarBaile(@RequestBody @Valid DadosAtualizarBaile dadosAtualizarBaile){

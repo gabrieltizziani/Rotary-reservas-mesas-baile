@@ -2,6 +2,7 @@ package com.rotary.reservas_mesas_rotary.controller;
 
 import com.rotary.reservas_mesas_rotary.domain.reserva.DadosCriarReserva;
 import com.rotary.reservas_mesas_rotary.domain.reserva.Reserva;
+import com.rotary.reservas_mesas_rotary.domain.reserva.ReservaDTO;
 import com.rotary.reservas_mesas_rotary.services.ReservaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,9 @@ public class ReservaController {
     private ReservaService reservaService;
 
     @PostMapping
-    public ResponseEntity<Reserva> criarReservas(@RequestBody @Valid DadosCriarReserva dadosCriarReserva){
+    public ResponseEntity<ReservaDTO> criarReservas(@RequestBody @Valid DadosCriarReserva dadosCriarReserva){
         Reserva reserva = reservaService.criarReserva(dadosCriarReserva);
-        return ResponseEntity.ok(reserva);
+        return ResponseEntity.ok(new ReservaDTO(reserva));
     }
 
     @DeleteMapping("/{id}/cancelar")
@@ -26,6 +27,4 @@ public class ReservaController {
         reservaService.cancelarReserva(id);
         return ResponseEntity.ok().build(); 
     }
-
-
 }

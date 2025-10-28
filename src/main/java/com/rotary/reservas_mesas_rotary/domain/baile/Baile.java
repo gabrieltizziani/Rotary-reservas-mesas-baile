@@ -31,9 +31,8 @@ public class Baile {
     @JsonManagedReference
     private List<Mesa> mesas = new ArrayList<>();
 
-
     @Enumerated(EnumType.STRING)
-    private StatusBaile status =  StatusBaile.ABERTO;
+    private StatusBaile status =  StatusBaile.ATIVO;
 
     public Baile (DadosCadastroBaile dadosCadastroBaile){
         this.nomeBaile = dadosCadastroBaile.nomeBaile();

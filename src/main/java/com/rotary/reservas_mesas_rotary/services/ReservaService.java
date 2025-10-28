@@ -9,12 +9,13 @@ import com.rotary.reservas_mesas_rotary.repositories.BaileRepository;
 import com.rotary.reservas_mesas_rotary.repositories.MesaRepository;
 import com.rotary.reservas_mesas_rotary.repositories.ReservaRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ReservaService {
+
     @Autowired
     private ReservaRepository reservaRepository;
 
@@ -40,24 +41,31 @@ public class ReservaService {
             throw new IllegalStateException("Essa mesa já está reservada!");
         }
 
+        Reserva reserva = new Reserva(dados, mesa, baile);
+
+        reservaRepository.save(reserva);
+
         mesa.setReservada(true);
+        mesa.setReserva(reserva);
         mesaRepository.save(mesa);
 
-        Reserva reserva = new Reserva(dados, mesa, baile);
-        return reservaRepository.save(reserva);
+        return reserva;
     }
+
 
     @Transactional
     public void cancelarReserva(Long reservaId) {
         Reserva reserva = reservaRepository.findById(reservaId)
                 .orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada."));
 
-        reserva.setAtiva(false);
-        reserva.getMesa().setReservada(false);
+        Mesa mesa = reserva.getMesa();
 
-        mesaRepository.save(reserva.getMesa());
-        reservaRepository.save(reserva);
+        if (mesa != null) {
+            mesa.setReservada(false);
+            mesa.setReserva(null);
+            mesaRepository.save(mesa);
+        }
+
+        reservaRepository.delete(reserva);
     }
-
-
 }

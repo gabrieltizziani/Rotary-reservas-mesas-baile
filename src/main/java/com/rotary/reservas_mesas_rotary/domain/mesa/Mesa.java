@@ -28,9 +28,10 @@ public class Mesa {
     @JsonBackReference
     private Baile baile;
 
-    @OneToOne(mappedBy = "mesa", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "mesa", cascade = CascadeType.ALL)
     @JsonManagedReference
     private Reserva reserva;
+
 
 
 }
