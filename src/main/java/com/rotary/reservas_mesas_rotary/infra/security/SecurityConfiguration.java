@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
@@ -23,31 +25,32 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return  httpSecurity
+        httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .cors(cors -> cors.configurationSource(request -> {
+                    var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+                    corsConfig.setAllowedOrigins(List.of("http://localhost:5173"));
+                    corsConfig.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+                    corsConfig.setAllowedHeaders(List.of("*"));
+                    corsConfig.setAllowCredentials(true);
+                    return corsConfig;
+                }))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-
-                        // Baile - somente ADMIN
+                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/baile").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/baile").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/baile/**").hasRole("ADMIN")
-
-                        // Baile - acesso USER e ADMIN
-                        .requestMatchers(HttpMethod.GET, "/baile").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.GET, "/baile/**").hasAnyRole("ADMIN", "USER")
-
-                        // Reservas — USER e ADMIN podem criar e cancelar
+                        .requestMatchers(HttpMethod.GET, "/baile", "/baile/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/reservas").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.DELETE, "/reservas/**").hasAnyRole("ADMIN", "USER")
-
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return httpSecurity.build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {

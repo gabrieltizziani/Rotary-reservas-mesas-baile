@@ -21,19 +21,27 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    public String generateToken( User user){
-        try{
+    public String generateToken(User user) {
+        try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
+
             String token = JWT.create()
                     .withIssuer("spring-security")
                     .withSubject(user.getLogin())
+                    .withClaim("roles", user.getAuthorities()
+                            .stream()
+                            .map(authority -> authority.getAuthority())
+                            .toList())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
+
             return token;
-        } catch (JWTCreationException exception){
+
+        } catch (JWTCreationException exception) {
             throw new RuntimeException("Error while generating JWT Token", exception);
         }
     }
+
 
     public String validateToken(String token){
         try{
